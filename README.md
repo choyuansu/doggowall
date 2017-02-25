@@ -1,2 +1,2 @@
 # doggowall
-Automatically change Mac OS X desktop backgrounds to viral HD pictures in Facebook dogspotting group.
+Automatically change Mac OS X desktop backgrounds to viral pictures in Facebook Dogspotting group.
