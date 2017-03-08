@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
+require_once('./vendor/autoload.php');
+require_once('initialize.php');
 
 $fb = new Facebook\Facebook([
   'app_id' => '1047692362026779',
@@ -30,7 +31,7 @@ $picture_posts = array();
 foreach($feed['data'] as $post) {
   // get type of post object
   try {
-    $response = $fb->get('/' . $post['id'] . '?fields=type');
+    $response = $fb->get('/' . $post['id'] . '?fields=type,full_picture');
     $post = $response->getDecodedBody();
   } catch(Facebook\Exceptions\FacebookResponseException $e) {
     // When Graph returns an error
@@ -44,7 +45,7 @@ foreach($feed['data'] as $post) {
 
   // record post with max reactions
   if(strcmp($post['type'], 'photo') == 0) {
-    $picture_posts[] = $post;
+    $picture_posts[$post['id']] = $post;
   }
 }
 
@@ -66,49 +67,31 @@ foreach($picture_posts as $post) {
   }
 }
 
-// get top 10 posts
-$top10 = array();
+// get id, src, and reaction_count of top 10 posts
+$doggos = array();
 for($i = 0; $i < 10; $i += 1) {
   $max = 0;
+  $doggo = array();
   foreach($reaction_count as $key => $post) {
     if($max < $post['summary']['total_count']) {
       $max = $post['summary']['total_count'];
       $max_key = $key;
-      $max_post = $post;
     }
   }
-  $top10[$max_key] = $max_post;
+  $doggo['id'] = $max_key;
+  $doggo['src'] = $picture_posts[$max_key]['full_picture'];
+  $doggo['reaction_count'] = $reaction_count[$max_key]['summary']['total_count'];
+  $doggos[] = $doggo;
   unset($reaction_count[$max_key]);
 }
 
-$pics = array();
-foreach($top10 as $key => $post) {
-  try {
-    echo $key . '<br>';
-    $response = $fb->get('/' . $key . '?fields=full_picture');
-    $pics[] = $response->getDecodedBody();
-  } catch(Facebook\Exceptions\FacebookResponseException $e) {
-    // When Graph returns an error
-    echo 'Graph returned an error: ' . $e->getMessage();
-    exit;
-  } catch(Facebook\Exceptions\FacebookSDKException $e) {
-    // When validation fails or other local issues
-    echo 'Facebook SDK returned an error: ' . $e->getMessage();
-    exit;
-  }
+foreach($doggos as $doggo) {
+  insert_doggo($doggo);
 }
-
-//$url = $post['full_picture'];
-//$dir = './doggo.jpg';
-//file_put_contents($dir, file_get_contents($url));
 
 $time_post = microtime(true);
 $exec_time = $time_post - $time_pre;
 
 echo 'Time spent:' . $exec_time . '<br>';
 
-foreach($pics as $pic) {
-  echo '<img src="' . $pic['full_picture'] . '"><br>';
-}
 ?>
-
