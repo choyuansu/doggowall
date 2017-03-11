@@ -23,8 +23,6 @@ $fb = new Facebook\Facebook([
 $accessToken = new Facebook\Authentication\AccessToken('1047692362026779|RvYNUDAID-ScCko_p2GVr-aypiw');
 $fb->setDefaultAccessToken($accessToken);
 
-$time_pre = microtime(true);
-
 // get an array of the most recent 100 posts
 try {
   $response = $fb->get('/10487409466/feed?limit=100');
@@ -100,10 +98,4 @@ for($i = 0; $i < 10; $i += 1) {
 foreach($doggos as $doggo) {
   insert_into_doggos($doggo);
 }
-
-$time_post = microtime(true);
-$exec_time = $time_post - $time_pre;
-
-echo 'Time spent:' . $exec_time . '<br>';
-
 ?>

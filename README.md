@@ -1,2 +1,2 @@
 # doggowall
-Automatically change Mac OS X desktop backgrounds to viral pictures in Facebook Dogspotting group.
+PHP site that shows top 10 posts in Facebook group dogspotting.
