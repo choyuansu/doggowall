@@ -86,7 +86,7 @@ for($i = 0; $i < 10; $i += 1) {
 }
 
 foreach($doggos as $doggo) {
-  insert_doggo($doggo);
+  insert_into_doggos($doggo);
 }
 
 $time_post = microtime(true);
