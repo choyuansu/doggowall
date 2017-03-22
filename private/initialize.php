@@ -20,6 +20,7 @@ define("DOC_ROOT", $doc_root);
 require_once('functions.php');
 require_once('database.php');
 require_once('query_functions.php');
+//include_once('analyticstracking.php');
 
 $db = db_connect();
 

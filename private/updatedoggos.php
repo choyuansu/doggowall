@@ -2,6 +2,8 @@
 require_once('./vendor/autoload.php');
 require_once('initialize.php');
 
+progressBar(0, 6);
+
 $doggos_result = find_all_in_doggos();
 
 while($doggo = db_fetch_assoc($doggos_result)) {
@@ -13,6 +15,7 @@ while($doggo = db_fetch_assoc($doggos_result)) {
 }
 
 truncate_doggos_table();
+progressBar(1, 6);
 
 $fb = new Facebook\Facebook([
   'app_id' => '1047692362026779',
@@ -29,13 +32,16 @@ try {
   $feed = $response->getDecodedBody();
 } catch(Facebook\Exceptions\FacebookResponseException $e) {
   // When Graph returns an error
-  echo 'Graph returned an error: ' . $e->getMessage();
+  //echo 'Graph returned an error: ' . $e->getMessage();
+  shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
   exit;
 } catch(Facebook\Exceptions\FacebookSDKException $e) {
   // When validation fails or other local issues
-  echo 'Facebook SDK returned an error: ' . $e->getMessage();
+  //echo 'Facebook SDK returned an error: ' . $e->getMessage();
+  shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
   exit;
 }
+progressBar(2, 6);
 
 $picture_posts = array();
 foreach($feed['data'] as $post) {
@@ -45,11 +51,13 @@ foreach($feed['data'] as $post) {
     $post = $response->getDecodedBody();
   } catch(Facebook\Exceptions\FacebookResponseException $e) {
     // When Graph returns an error
-    echo 'Graph returned an error: ' . $e->getMessage();
+    //echo 'Graph returned an error: ' . $e->getMessage();
+    shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
     exit;
   } catch(Facebook\Exceptions\FacebookSDKException $e) {
     // When validation fails or other local issues
-    echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    //echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
     exit;
   }
 
@@ -58,6 +66,7 @@ foreach($feed['data'] as $post) {
     $picture_posts[$post['id']] = $post;
   }
 }
+progressBar(3, 6);
 
 // get reaction count of each picture post
 $reaction_count = array();
@@ -68,14 +77,17 @@ foreach($picture_posts as $post) {
     $reaction_count[$post['id']] = $response->getDecodedBody();
   } catch(Facebook\Exceptions\FacebookResponseException $e) {
     // When Graph returns an error
-    echo 'Graph returned an error: ' . $e->getMessage();
+    //echo 'Graph returned an error: ' . $e->getMessage();
+    shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
     exit;
   } catch(Facebook\Exceptions\FacebookSDKException $e) {
     // When validation fails or other local issues
-    echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    //echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    shell_exec('cd /var/www/private/ && /usr/bin/php /var/www/private/updatedoggos.php');
     exit;
   }
 }
+progressBar(4, 6);
 
 // get id, src, and reaction_count of top 10 posts
 $doggos = array();
@@ -94,8 +106,10 @@ for($i = 0; $i < 10; $i += 1) {
   $doggos[] = $doggo;
   unset($reaction_count[$max_key]);
 }
+progressBar(5, 6);
 
 foreach($doggos as $doggo) {
   insert_into_doggos($doggo);
 }
+progressBar(6, 6);
 ?>

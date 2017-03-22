@@ -1,0 +1,12 @@
+body {
+  background-color: black !important;
+}
+h1,h3 {
+  color: white !important;
+}
+img {
+  margin: 0 auto;
+}
+.container {
+  text-align: center;
+}

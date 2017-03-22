@@ -1,4 +1,6 @@
 <?php
+  date_default_timezone_set('America/Los_Angeles');
+
   // doggos functions
   function find_in_doggos($id) {
     global $db;
@@ -12,12 +14,14 @@
   function insert_into_doggos($doggo) {
     global $db;
 
+    $created_at = date("Y-m-d");
     $sql = "INSERT INTO doggos ";
-    $sql .= "(id, src, reaction_count)";
+    $sql .= "(id, src, reaction_count, created_at)";
     $sql .= "VALUES (";
     $sql .= "'" . db_escape($db, $doggo['id']) . "',";
     $sql .= "'" . db_escape($db, $doggo['src']) . "',";
-    $sql .= "'" . db_escape($db, $doggo['reaction_count']) . "'";
+    $sql .= "'" . db_escape($db, $doggo['reaction_count']) . "',";
+    $sql .= "'" . $created_at . "'";
     $sql .= ");";
 
     $result = db_query($db, $sql);
